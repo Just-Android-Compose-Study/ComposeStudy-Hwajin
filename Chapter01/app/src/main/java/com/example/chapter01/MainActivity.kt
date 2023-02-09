@@ -19,6 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Devices
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 class MainActivity : ComponentActivity() {
@@ -29,8 +31,8 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
 @Composable
+@Preview(showBackground = true, backgroundColor = 0xff7f50, widthDp = 100, heightDp = 100)
 fun Welcome() {
     Text(
         text = stringResource(id = R.string.welcome),
@@ -52,7 +54,7 @@ fun TextAndButton(name: MutableState<String>, nameEntered: MutableState<Boolean>
     Row(modifier = Modifier.padding(top = 8.dp)) {
         TextField( // edittext
             value = name.value,
-            onValueChange = {// 텍스트 변경이 발생한다면
+            onValueChange = { // 텍스트 변경이 발생한다면
                 name.value = it
             },
             placeholder = { // hint
@@ -103,4 +105,32 @@ fun Hello() {
             }
         }
     }
+}
+
+// 미리 보기
+@Composable
+@Preview(group = "my-group-1")
+fun Hi() {
+    Text(
+        text = stringResource(id = R.string.welcome),
+        style = MaterialTheme.typography.subtitle1
+    )
+}
+
+// 매개변수가 있다면 컴포저블 함수를 감싼 함수를 만들기
+@Composable
+@Preview(group = "my-group-1", device = Devices.AUTOMOTIVE_1024p)
+fun GreetingWrapper() {
+    Greeting("Jetpack Compose")
+}
+
+// 매개변수가 있다면 기본값 추가
+@Composable
+@Preview(group = "my-group-1")
+fun AltGreeting(name: String = "Jetpack Compose") {
+    Text(
+        text = stringResource(id = R.string.hello, name),
+        textAlign = TextAlign.Center,
+        style = MaterialTheme.typography.subtitle1
+    )
 }
