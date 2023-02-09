@@ -30,7 +30,9 @@ fun Factorial() {
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Column() {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Text(
                 modifier = Modifier.clickable {
                     expanded = true // 드롭다운 메뉴가 화면에 즉시 나타남. false하면 클릭해도 아무런 일이 없음
