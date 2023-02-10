@@ -17,9 +17,46 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            Factorial()
+            Factorial2()
         }
     }
+}
+
+// 컴포저블 함수는 주로 content 매개변수를 전달받는데, 이는 다른 컴포저블 함수
+// 보통 content를 생략
+@Composable
+fun Factorial2() {
+    var expanded by remember { mutableStateOf(false) }
+    var text by remember { mutableStateOf(factorialAsString(0)) }
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center,
+        content = {
+            Column {
+                Text(
+                    modifier = Modifier.clickable {
+                        expanded = true
+                    },
+                    text = text,
+                    style = MaterialTheme.typography.h2
+                )
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = {
+                        expanded = false
+                    }) {
+                    for (n in 0 until 10) {
+                        DropdownMenuItem(onClick = {
+                            expanded = false
+                            text = factorialAsString(n)
+                        }) {
+                            Text("${n.toString()}!")
+                        }
+                    }
+                }
+            }
+        }
+    )
 }
 
 @Composable
@@ -28,7 +65,7 @@ fun Factorial() {
     var text by remember { mutableStateOf(factorialAsString(0)) }
     Box(
         modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
