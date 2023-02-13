@@ -13,7 +13,7 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
-import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
@@ -53,10 +53,23 @@ fun Chapter03Theme(
         else -> LightColorScheme
     }
     val view = LocalView.current
-    if (!view.isInEditMode) {
+
+    // isInEditMode? Indicates whether this View is currently in edit mode.
+    // edit mode? Android Studio 내에 View가 표시될 때 edit mode에 있음
+    if (!view.isInEditMode) { // 상태바 색상이 변경 (회색 -> 보라색)
+        /* getting the current window by tapping into the Activity */
+        val currentWindow = (view.context as? Activity)?.window
+            ?: throw Exception("Not in an activity - unable to get Window reference")
+
+        // Side Effect? Composable 범위 밖에서 발생하는 앱 상태에 대한 변경
+        // 아래에 사용한 SideEffect는 Compose의 State을 Compose에서 관리하지 않는 객체와 공유하기 위해 사용
         SideEffect {
-            (view.context as Activity).window.statusBarColor = colorScheme.primary.toArgb()
-            ViewCompat.getWindowInsetsController(view)?.isAppearanceLightStatusBars = darkTheme
+            /* the default code did the same cast here - might as well use our new variable! */
+            // (view.context as Activity).window.statusBarColor = colorScheme.primary.toArgb()
+            currentWindow.statusBarColor = colorScheme.primary.toArgb()
+            /* accessing the insets controller to change appearance of the status bar, with 100% less deprecation warnings */
+            WindowCompat.getInsetsController(currentWindow, view).isAppearanceLightStatusBars =
+                darkTheme
         }
     }
 
