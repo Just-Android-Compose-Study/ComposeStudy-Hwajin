@@ -4,19 +4,22 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.DrawModifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -37,7 +40,20 @@ class MainActivity : ComponentActivity() {
                     //ColoredTextDemo("hi")
                     //ShortColoredTextDemo("hi")
 
+                    // OrderDemo()
+
+                    Text(
+                        text = "Hello Compose",
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .drawCrossLine(),
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.displayLarge
+                    )
+
+
                     // BoxWithConstraints: Box의 기능을 모두 포함하면서 Layout의 Constraint(최대, 최소 크기값)에 접근할 수 있도록 만들어진 layout
+                    /*
                     BoxWithConstraints(
                         contentAlignment = Alignment.Center,
                         modifier = Modifier.fillMaxSize()
@@ -78,6 +94,8 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                     }
+
+                     */
                 }
             }
         }
@@ -140,4 +158,53 @@ fun Color.complementary() = Color(
     red = 1F - red,
     green = 1F - green,
     blue = 1F - blue
+)
+
+@Composable
+fun OrderDemo() {
+    var color by remember { mutableStateOf(Color.Blue) }
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            /*
+            여기에 쓴다면 클릭 이벤트가 padding 영역에도 적용됨
+            .clickable {
+                color = if (color == Color.Blue)
+                    Color.Red
+                else
+                    Color.Blue
+            }
+            */
+            .padding(32.dp)
+            .border(BorderStroke(width = 2.dp, color = color))
+            //.padding(32.dp) // 여기에 쓴다면 border에는 padding이 적용되지 않고 background에는 padding이 적용
+            .background(Color.LightGray)
+            .clickable {
+                color = if (color == Color.Blue)
+                    Color.Red
+                else
+                    Color.Blue
+            }
+    )
+}
+
+fun Modifier.drawCrossLine() = then(
+    object : DrawModifier {
+        override fun ContentDrawScope.draw() {
+            //drawContent() // 여기에 쓰면 text가 라인 아래에 위치
+            drawLine(
+                color = Color.Blue,
+                start = Offset(0F, 0F),
+                end = Offset(size.width - 1, size.height - 1),
+                strokeWidth = 20F
+            )
+            drawLine(
+                color = Color.Yellow,
+                start = Offset(0F, size.height - 1),
+                end = Offset(size.width - 1, 0F),
+                strokeWidth = 10F
+            )
+            drawContent() // text가 라인 위에 위치
+        }
+    }
 )
