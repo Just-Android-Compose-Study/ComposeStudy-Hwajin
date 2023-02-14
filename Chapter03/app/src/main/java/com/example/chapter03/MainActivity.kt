@@ -3,13 +3,14 @@ package com.example.chapter03
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import com.example.chapter03.ui.theme.Chapter03Theme
 
 class MainActivity : ComponentActivity() {
@@ -22,7 +23,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting("Android")
+                    // ColoredTextDemo("hi")
+                    ShortColoredTextDemo("hi")
                 }
             }
         }
@@ -30,14 +32,21 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
+fun ColoredTextDemo(
+    text: String = "",
+    color: Color = Color.Black
+) {
+    Text(
+        text = text,
+        style = TextStyle(color = color)
+    )
 }
 
-@Preview(showBackground = true)
 @Composable
-fun DefaultPreview() {
-    Chapter03Theme {
-        Greeting("Android")
-    }
-}
+fun ShortColoredTextDemo(
+    text: String = "",
+    color: Color = Color.Black
+) = Text(
+    text = text,
+    style = TextStyle(color = color)
+)
