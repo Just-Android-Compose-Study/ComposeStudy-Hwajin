@@ -37,12 +37,17 @@ class MainActivity : ComponentActivity() {
                     //ColoredTextDemo("hi")
                     //ShortColoredTextDemo("hi")
 
+                    // BoxWithConstraints: Box의 기능을 모두 포함하면서 Layout의 Constraint(최대, 최소 크기값)에 접근할 수 있도록 만들어진 layout
                     BoxWithConstraints(
                         contentAlignment = Alignment.Center,
                         modifier = Modifier.fillMaxSize()
                     ) {
                         Column(
-                            modifier = Modifier.width(min(400.dp, maxWidth)),
+                            /*
+                                슬라이더의 너비를 최대 400밀도 독립 픽셀만큼 설정
+                                화면이 설정한 밀도보다 작다면 (600으로 설정) 그 너비(화면 너비)를 대신 사용 => 너비가 화면 크기로 꽉참
+                             */
+                            modifier = Modifier.width(min(600.dp, maxWidth)), // BoxWithConstraints를 사용했기 때문에 maxWidth 사용 가능
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             // mutableStateOf 안 Color값이 초기 색상
