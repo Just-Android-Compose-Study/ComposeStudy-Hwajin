@@ -42,6 +42,8 @@ class MainActivity : ComponentActivity() {
 
                     // OrderDemo()
 
+                    // drawCrossLine()
+                    /*
                     Text(
                         text = "Hello Compose",
                         modifier = Modifier
@@ -50,10 +52,10 @@ class MainActivity : ComponentActivity() {
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.displayLarge
                     )
+                     */
 
 
                     // BoxWithConstraints: Box의 기능을 모두 포함하면서 Layout의 Constraint(최대, 최소 크기값)에 접근할 수 있도록 만들어진 layout
-                    /*
                     BoxWithConstraints(
                         contentAlignment = Alignment.Center,
                         modifier = Modifier.fillMaxSize()
@@ -94,8 +96,6 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                     }
-
-                     */
                 }
             }
         }
