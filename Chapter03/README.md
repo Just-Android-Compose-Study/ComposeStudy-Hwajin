@@ -12,3 +12,11 @@
 | orderDemo | drawCrossLine() |
 | ------ |--------|
 |![img](https://user-images.githubusercontent.com/61824695/218643877-6a5ade01-a6b8-4eae-a3e8-21657f53a2fc.png)     |![img](https://user-images.githubusercontent.com/61824695/218643923-bf003b4f-58ab-475d-9a84-a86b8ba0df04.png)
+
+
+### 3장 스터디 내용
+- 105p 변경자 동작 이해
+- `modifier 매개변수는 첫 번째 널이 가능한 매개변수가 돼야 하므로 후행 람다 표현식을 제외한 필요로 하는 모든 매개변수의 맨 뒤에 위치해야 한다.`
+    - nullable한 parameter가 먼저 오게 되면, Composable 함수를 사용할 때 굳이 정의하지 않아도 되는 parameter값의 초기화를 강제받게 된다.
+    - Composable 함수에서 정의한 Modifier를 자식 Composable 함수에서 추가로 설정하기 위해 Modifier를 반드시 받는 구조이기 때문에 NonNull인 Modifier를 맨 앞으로 가져오는 것이 경제적
+    - 코드에서 관련 부분 확인
