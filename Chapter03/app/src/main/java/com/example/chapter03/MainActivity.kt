@@ -2,6 +2,7 @@ package com.example.chapter03
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
@@ -9,10 +10,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Slider
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,6 +19,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -37,6 +36,13 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+                    TextWithWarning1("", Modifier.background(Color.Blue)) {
+                        Log.d("TextWithWarning1", "nullable한 parameter가 먼저 오게 되면, Composable 함수를 사용할 때 굳이 정의하지 않아도 되는 parameter값의 초기화를 강제받게 된다.")
+                        // default값이 있어 null이 가능한 매개변수 name
+                        // name 매개변수 없이 modifier를 정의할 수 없기 때문에 name값의 초기화가 무조건 진행되어야 함
+                        // TextWithWarning1(Modifier.background(Color.Blue)) => 에러
+                    }
+
                     //ColoredTextDemo("hi")
                     //ShortColoredTextDemo("hi")
 
@@ -53,7 +59,6 @@ class MainActivity : ComponentActivity() {
                         style = MaterialTheme.typography.displayLarge
                     )
                      */
-
 
                     // BoxWithConstraints: Box의 기능을 모두 포함하면서 Layout의 Constraint(최대, 최소 크기값)에 접근할 수 있도록 만들어진 layout
                     BoxWithConstraints(
@@ -96,8 +101,54 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                     }
+
+
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun TextWithWarning1(
+    name: String = "Default",
+    modifier: Modifier = Modifier,
+    callback: () -> Unit
+) {
+    Text(text = "TextWithWarning1! $name", modifier = modifier
+        .background(Color.Yellow)
+        .clickable { callback.invoke() })
+}
+@Composable
+// Warning 이유: Modifier parameter should be named modifier
+fun TextWithWarning2(test: Modifier = Modifier, name: String = "", callback: () -> Unit) {
+    Text(text = "TextWithWarning2 $name!", modifier = test
+        .background(Color.Yellow)
+        .clickable { callback.invoke() })
+}
+
+@Composable
+// 부모 Composable 함수에서 NonNull인 Modifier를 맨 앞으로 가져오는 것이 경제적
+fun TextWithoutWarning(
+    modifier: Modifier = Modifier,
+    buttonModifier: Modifier,
+    name: String = "",
+    callback: () -> Unit
+) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(text = "TextWithoutWarning $name!", modifier = modifier
+            .padding(10.dp) // margin concept
+            .background(Color.Yellow)
+            .padding(10.dp) // real padding
+            .clickable { callback.invoke() })
+
+        val context = LocalContext.current
+        Button(
+            modifier = buttonModifier.clickable {
+                Toast.makeText(context, "버튼에 clickable을 넣으면?", Toast.LENGTH_SHORT).show()
+            },
+            onClick = { Toast.makeText(context, "버튼 클릭됨", Toast.LENGTH_SHORT).show() }) {
+            Text("버튼")
         }
     }
 }
