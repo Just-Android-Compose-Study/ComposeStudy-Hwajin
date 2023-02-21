@@ -4,11 +4,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -18,12 +17,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.MeasurePolicy
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import com.example.chapter04.ui.theme.Chapter04Theme
+import kotlin.random.Random
 
 class MainActivity : ComponentActivity() {
     /* @없으면 에러가 나타남. -> 실험용 foundation API를 사용했기 때문에
@@ -35,18 +36,11 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            Chapter04Theme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    /* (1) Constraint 적용 전
-                    PredefinedLayoutsDemo()
-                    */
-                    ConstraintLayoutDemo()
-                }
-            }
+            //(1) Constraint 적용 전
+            //PredefinedLayoutsDemo()
+
+            // (2) ConstraintLayoutDemo()
+            CustomLayoutDemo()
         }
     }
 }
@@ -233,4 +227,81 @@ fun CheckboxWithLabel2(
             }
         )
     }
+}
+
+// (3) 커스텀 레이아웃
+@Composable
+@Preview
+fun CustomLayoutDemo() {
+    SimpleFlexBox {
+        for (i in 0..42) {
+            ColoredBox()
+        }
+    }
+}
+
+@Composable
+fun ColoredBox() {
+    Box(
+        modifier = Modifier
+            .border(
+                width = 2.dp,
+                color = Color.Black
+            )
+            .background(randomColor())
+            .width((40 * randomInt123()).dp)
+            .height((10 * randomInt123()).dp)
+    )
+}
+
+@Composable
+fun SimpleFlexBox(
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
+) {
+    Layout(
+        modifier = modifier,
+        content = content,
+        measurePolicy = simpleFlexboxMeasurePolicy()
+    )
+}
+
+private fun simpleFlexboxMeasurePolicy(): MeasurePolicy =
+    MeasurePolicy { measurables, constraints ->
+        val placeables = measurables.map { measurable ->
+            measurable.measure(constraints)
+        }
+        layout(
+            constraints.maxWidth,
+            constraints.maxHeight
+        ) {
+            var yPos = 0
+            var xPos = 0
+            var maxY = 0
+            placeables.forEach { placeable ->
+                if (xPos + placeable.width >
+                    constraints.maxWidth
+                ) {
+                    xPos = 0
+                    yPos += maxY
+                    maxY = 0
+                }
+                placeable.placeRelative(
+                    x = xPos,
+                    y = yPos
+                )
+                xPos += placeable.width
+                if (maxY < placeable.height) {
+                    maxY = placeable.height
+                }
+            }
+        }
+    }
+
+private fun randomInt123() = Random.nextInt(1, 4)
+
+private fun randomColor() = when (randomInt123()) {
+    1 -> Color.Red
+    2 -> Color.Green
+    else -> Color.Blue
 }
