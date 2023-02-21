@@ -267,7 +267,7 @@ fun SimpleFlexBox(
 }
 
 private fun simpleFlexboxMeasurePolicy(): MeasurePolicy =
-    MeasurePolicy { measurables, constraints ->
+    MeasurePolicy { measurables, constraints -> // measurables: 자식, constraints: 부모
         val placeables = measurables.map { measurable ->
             measurable.measure(constraints)
         }
@@ -279,20 +279,22 @@ private fun simpleFlexboxMeasurePolicy(): MeasurePolicy =
             var xPos = 0
             var maxY = 0
             placeables.forEach { placeable ->
+                // 부모의 maxWidth보다 xPos + 자식 width가 더 넓으면
+                // => 추가해야 하는 도형이 끝나는 x좌표가 화면 밖에 있다면
                 if (xPos + placeable.width >
-                    constraints.maxWidth
+                    constraints.maxWidth // 부모의 maxWidth(화면 상의 너비)
                 ) {
-                    xPos = 0
-                    yPos += maxY
+                    xPos = 0 // 다음 줄 시작에 추가해야 하니까 xPos은 0
+                    yPos += maxY // yPos은 현재 줄의 최대 y값을 더 한 값으로
                     maxY = 0
                 }
                 placeable.placeRelative(
                     x = xPos,
                     y = yPos
                 )
-                xPos += placeable.width
-                if (maxY < placeable.height) {
-                    maxY = placeable.height
+                xPos += placeable.width // 기존 값에서 자식 width을 더한 값이 xPos
+                if (maxY < placeable.height) { // maxY값이 자식의 height값보다 작다면 => 현재 동일한 라인에 있는 box들 중에서 자식 height만큼 넓지 않다면
+                    maxY = placeable.height // maxY값은 자식 height값으로 변경
                 }
             }
         }
