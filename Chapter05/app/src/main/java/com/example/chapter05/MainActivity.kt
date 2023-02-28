@@ -3,14 +3,13 @@ package com.example.chapter05
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -18,6 +17,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.chapter5.R
 import kotlin.random.Random
 
@@ -25,8 +28,22 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            FlowOfEventsDemo()
+            // FlowOfEventsDemo()
+            ViewModelDemo()
         }
+    }
+}
+
+class MyViewModel : ViewModel() {
+
+    private val _text: MutableLiveData<String> =
+        MutableLiveData<String>("안녕3")
+
+    val text: LiveData<String>
+        get() = _text
+
+    fun setText(value: String) {
+        _text.value = value
     }
 }
 
@@ -173,6 +190,45 @@ fun TemperatureRadioButton( // 섭씨, 화씨 온도 버튼
             text = stringResource(resId),
             modifier = Modifier
                 .padding(start = 8.dp)
+        )
+    }
+}
+
+//(3)
+@Composable
+@Preview
+fun ViewModelDemo() {
+    val viewModel: MyViewModel = viewModel() // viewModel 컴포저블 호출
+    val state1 = remember { // 회전 시 값 유지 x
+        mutableStateOf("안녕1")
+    }
+    val state2 = rememberSaveable { // 회전 시 값 유지
+        mutableStateOf("안녕2")
+    }
+    // 회전 시 값 유지
+    val state3 = viewModel.text.observeAsState() // livedata를 상태로 변환해 사용
+    state3.value?.let {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            MyTextField(state1) { state1.value = it }
+            MyTextField(state2) { state2.value = it }
+            MyTextField(state3) {
+                viewModel.setText(it) // viewModel 클래스에 있는 상태에 변경 사항을 반영
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MyTextField(
+    value: State<String?>, // ?인 이유는 observeAsState()의 반환 타입이 State<T?>라서
+    onValueChange: (String) -> Unit
+) {
+    value.value?.let {
+        TextField(
+            value = it,
+            onValueChange = onValueChange,
+            modifier = Modifier.fillMaxWidth()
         )
     }
 }
