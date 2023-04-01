@@ -67,7 +67,7 @@ fun ComposeDemo(value: Float, onClick: () -> Unit) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color.Blue)
+                .background(Color.LightGray)
                 .height(64.dp),
             contentAlignment = Alignment.Center
         ) {
